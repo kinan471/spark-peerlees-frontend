@@ -2,19 +2,17 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useApp } from "@/contexts/AppContext";
 import logo from "@/assets/spark-logo.png";
 
 const navLinks = [
-  { label: "Galeri", href: "/" },
-  { label: "Ürünler", href: "/products" },
-  { label: "Swarder Bölümü", href: "/swarder" },
-  { label: "Bakım Bölümü", href: "/maintenance" },
-  { label: "Bize Ulaşın", href: "/contact" },
+  { label: "Ana Sayfa", href: "/" },
+  { label: "Mağaza", href: "/store" },
+  { label: "Batarya Laboratuvarı", href: "/battery-lab" },
+  { label: "Bakım Merkezi", href: "/maintenance" },
+  { label: "Bize Sat", href: "/sell-to-us" },
 ];
 
 const Navbar = () => {
-  const { settings } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useApp } from "@/contexts/AppContext";
 
 const SellToUs = () => {
-  const { settings, addMessage } = useApp();
+  const { addTradeInRequest } = useApp();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -30,19 +30,20 @@ const SellToUs = () => {
     setIsSubmitting(true);
     
     try {
-      await addMessage({
-        name: formData.name,
-        email: "sell-offer@swarder.com",
-        subject: "Müşteriden Satış Teklifi",
-        message: `Model: ${formData.model}\nDurum: ${conditionLabels[formData.condition]}\nİstenen Fiyat: ${formData.price}\nDetaylar: ${formData.description}`,
+      await addTradeInRequest({
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        vehicle_type: 'ebike', // Default type, can be inferred or left as general ebike
+        brand_model: formData.model,
+        condition: conditionLabels[formData.condition],
       });
       
       setSuccess(true);
       
       const msg = encodeURIComponent(
-        `Merhaba Spark Peerless, aracımı satmak istiyorum:\nAd: ${formData.name}\nModel: ${formData.model}\nDurum: ${conditionLabels[formData.condition]}\nİstenen Fiyat: ${formData.price}₺`
+        `Merhaba SPARK, aracımı satmak istiyorum:\nAd: ${formData.name}\nModel: ${formData.model}\nDurum: ${conditionLabels[formData.condition]}\nİstenen Fiyat: ${formData.price}₺\nDetaylar: ${formData.description}`
       );
-      const whatsappNumber = settings.whatsappNumber.replace(/\D/g, "") || "905387845388";
+      const whatsappNumber = "905387845388";
       setTimeout(() => {
         window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, "_blank");
       }, 2000);

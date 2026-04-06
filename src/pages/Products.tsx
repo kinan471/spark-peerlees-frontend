@@ -8,14 +8,11 @@ import { useApp } from "@/contexts/AppContext";
 import { Button } from "@/components/ui/button";
 
 const Products = () => {
-  const { products, settings } = useApp();
+  const { products } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
   
-  const swarderCategories = ['ebike', 'scooter', 'accessory'];
-
   const filtered = products
-    .filter(p => !swarderCategories.includes(p.category))
     .filter((p) => p.name_ar.includes(searchQuery) || (p.name_tr && p.name_tr.includes(searchQuery)))
     .sort((a, b) => {
       if (sortBy === "price-asc") return (a.price || 0) - (b.price || 0);
@@ -38,10 +35,10 @@ const Products = () => {
                 Geleceğin Teknolojisi Elinizde
               </div>
               <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tight">
-                SPARK E-Mağaza
+                Elektrikli Mobilite Mağazası
               </h1>
               <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-xl lg:mr-0 lg:ml-auto">
-                En iyi elektronik ürünler için benzersiz bir alışveriş deneyiminin keyfini çıkarın. Garantili kalite, hızlı kargo ve uzman desteği.
+                Yüksek performanslı elektrikli bisiklet ve scooter modellerimizi keşfedin. Garantili kalite, teknik destek ve özelleştirme imkanları.
               </p>
             </div>
           </div>
@@ -103,6 +100,11 @@ const Products = () => {
                           category={product.category}
                           rating={5}
                           isNew={index === 0}
+                          power={product.power}
+                          range={product.range}
+                          weight={product.weight}
+                          speed={product.speed}
+                          isSparkCertified={product.is_spark_certified}
                         />
                       </div>
                     </Link>

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://spark-peerlees.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 async function handleResponse(response: Response) {
   if (!response.ok) {
@@ -34,52 +34,41 @@ export const api = {
       method: 'POST'
     }).then(handleResponse),
   },
-  settings: {
-    get: () => fetch(`${API_BASE_URL}/settings/current/`).then(handleResponse),
-    update: (data: any) => fetch(`${API_BASE_URL}/settings/current/`, {
+  batteryCustomization: {
+    list: () => fetch(`${API_BASE_URL}/battery-customization/`).then(handleResponse),
+    create: (data: any) => fetch(`${API_BASE_URL}/battery-customization/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/battery-customization/${id}/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then(handleResponse),
   },
-  messages: {
-    list: () => fetch(`${API_BASE_URL}/messages/`).then(handleResponse),
-    create: (data: any) => fetch(`${API_BASE_URL}/messages/`, {
+  maintenance: {
+    list: () => fetch(`${API_BASE_URL}/maintenance/`).then(handleResponse),
+    create: (data: any) => fetch(`${API_BASE_URL}/maintenance/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then(handleResponse),
-    update: (id: string, data: any) => fetch(`${API_BASE_URL}/messages/${id}/`, {
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/maintenance/${id}/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
-    }).then(handleResponse),
-    
-    // --- الإضافة الجديدة هنا ---
-    markAsRead: (id: string) => fetch(`${API_BASE_URL}/messages/${id}/`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_read: true }) // نرسل فقط الحقل المطلوب تحديثه
-    }).then(handleResponse),
-    // -----------------------
-  },
-  orders: {
-    list: () => fetch(`${API_BASE_URL}/orders/`).then(handleResponse),
-    create: (data: any) => fetch(`${API_BASE_URL}/orders/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(handleResponse),
-    updateStatus: (id: string, status: string) => fetch(`${API_BASE_URL}/orders/${id}/`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
     }).then(handleResponse),
   },
-  visits: {
-    list: () => fetch(`${API_BASE_URL}/visits/`).then(handleResponse),
-    create: (data: any) => fetch(`${API_BASE_URL}/visits/`, {
+  tradeIn: {
+    list: () => fetch(`${API_BASE_URL}/trade-in/`).then(handleResponse),
+    create: (data: any) => fetch(`${API_BASE_URL}/trade-in/`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/trade-in/${id}/`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then(handleResponse),

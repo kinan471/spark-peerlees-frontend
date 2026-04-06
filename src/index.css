@@ -4,38 +4,32 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98.4%;
-    --foreground: 217 33% 17.5%;
+    --background: 0 0% 100%; /* #FFFFFF pure white */
+    --foreground: 0 0% 20%; /* #333333 dark text */
     --card: 0 0% 100%;
-    --card-foreground: 217 33% 17.5%;
+    --card-foreground: 0 0% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 217 33% 17.5%;
-    --primary: 221 83% 53%;
+    --popover-foreground: 0 0% 20%;
+    --primary: 211 100% 50%; /* #007BFF */
     --primary-foreground: 0 0% 100%;
-    --secondary: 161 84% 39%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 100%;
-    --muted: 210 40% 94%;
+    --secondary: 45 100% 51%; /* #FFC107 */
+    --secondary-foreground: 0 0% 20%;
+    --accent: 45 100% 51%; /* #FFC107 warning/power */
+    --accent-foreground: 0 0% 20%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --ring: 211 100% 50%;
     --radius: 0.85rem;
 
     --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-    --shadow-premium: 0 20px 50px rgba(37, 99, 235, 0.08);
+    --shadow-premium: 0 20px 50px rgba(0, 123, 255, 0.08); /* Glow matched to primary */
   }
 
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 13%;
-    --primary: 217 91% 60%;
-    --border: 217 33% 20%;
-  }
+  /* No dark mode mappings to enforce strict light mode */
 }
 
 @layer base {

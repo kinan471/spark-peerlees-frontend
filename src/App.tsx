@@ -14,6 +14,8 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const Maintenance = lazy(() => import("./pages/Maintenance.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Swarder = lazy(() => import("./pages/Swarder.tsx"));
+const BatteryLab = lazy(() => import("./pages/BatteryLab.tsx"));
+const SellToUs = lazy(() => import("./pages/SellToUs.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
 const AdminProducts = lazy(() => import("./pages/admin/AdminProducts.tsx"));
@@ -23,11 +25,9 @@ const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
 const queryClient = new QueryClient();
 
 const VisitTracker = () => {
-  const { trackVisit } = useApp();
   const location = useLocation();
 
   useEffect(() => {
-    trackVisit(location.pathname);
     // Scroll to the top automatically when navigating to a new page
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); 
   }, [location.pathname]);
@@ -57,7 +57,9 @@ const App = () => (
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/swarder" element={<Swarder />} />
+              <Route path="/store" element={<Swarder />} />
+              <Route path="/battery-lab" element={<BatteryLab />} />
+              <Route path="/sell-to-us" element={<SellToUs />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/messages" element={<AdminMessages />} />

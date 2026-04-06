@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Zap } from "lucide-react";
 
 const ProductsSection = () => {
-  const { products, settings } = useApp();
+  const { products } = useApp();
   const swarderCategories = ['ebike', 'scooter', 'accessory'];
   const featured = products
     .filter(p => !swarderCategories.includes(p.category))
@@ -23,20 +23,20 @@ const ProductsSection = () => {
           <div className="max-w-2xl space-y-4 text-center lg:text-right">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest border border-accent/20">
               <Zap className="w-3 h-3 fill-accent" />
-              En Çok Talep Gören Kampanyalar
+              Swarder Elektrikli Mobilite Ürünleri
             </div>
             <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
-              En Yeni Ürünler
+              En Yeni E-Mobilite Ürünleri
             </h2>
             <p className="text-lg text-slate-500 font-medium max-w-xl lg:ml-0 lg:mr-auto">
-              Akıllı cihazlar ve aksesuarların özenle seçilmiş en yeni koleksiyonunu rekabetçi fiyatlarla keşfedin.
+              Şehir içi ulaşımda çığır açan, yüksek performanslı ve Spark onaylı elektrikli araç modellerimizi keşfedin.
             </p>
           </div>
 
           <div className="hidden lg:block">
-            <Link to="/products">
+            <Link to="/store">
               <Button variant="outline" size="lg" className="h-14 px-8 rounded-2xl border-2 border-slate-100 font-bold hover:bg-slate-50 hover:text-primary transition-all gap-3">
-                Tüm Ürünler
+                Tümünü Gör
                 <ArrowLeft className="w-5 h-5" />
               </Button>
             </Link>
@@ -54,6 +54,11 @@ const ProductsSection = () => {
                   category={product.category}
                   rating={5}
                   isNew={index === 0}
+                  power={product.power}
+                  range={product.range}
+                  weight={product.weight}
+                  speed={product.speed}
+                  isSparkCertified={product.is_spark_certified}
                 />
               </div>
             </Link>

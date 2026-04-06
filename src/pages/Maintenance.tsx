@@ -79,7 +79,7 @@ const steps = [
 ];
 
 const Maintenance = () => {
-  const { settings } = useApp();
+  const { addMaintenanceRequest } = useApp();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -89,10 +89,18 @@ const Maintenance = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    addMaintenanceRequest({
+      customer_name: formData.name,
+      customer_phone: formData.phone,
+      issue_type: 'general',
+      description: `Cihaz: ${formData.deviceType}\nSorun: ${formData.issue}`
+    });
+
     const msg = encodeURIComponent(
       `Merhaba SPARK, bakım randevusu almak istiyorum:\nİsim: ${formData.name}\nTelefon: ${formData.phone}\nCihaz: ${formData.deviceType}\nSorun: ${formData.issue}`
     );
-    window.open(`https://wa.me/${settings.whatsappNumber || '905387845388'}?text=${msg}`, "_blank");
+    window.open(`https://wa.me/905387845388?text=${msg}`, "_blank");
   };
 
   return (
@@ -225,7 +233,7 @@ const Maintenance = () => {
                   Bilgilerinizi doldurun, teknik uzmanımız bakım randevusu almak için 15 dakikadan kısa sürede sizinle iletişime geçecektir.
                 </p>
                 <div className="pt-6">
-                  <a href={`tel:${settings.whatsappNumber || '905387845388'}`} className="inline-flex items-center gap-4 text-2xl font-black text-white hover:text-secondary transition-colors">
+                  <a href={`tel:+905387845388`} className="inline-flex items-center gap-4 text-2xl font-black text-white hover:text-secondary transition-colors">
                     +90 538 784 53 88
                   </a>
                 </div>
