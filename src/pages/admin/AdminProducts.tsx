@@ -114,6 +114,13 @@ const AdminProducts = () => {
       const data = await api.products.scrape(url);
 
       if (data && data.success) {
+        // Precise mapping for Swarder specific fields
+        const specs = data.specifications || {};
+        const power = specs["Motor Gücü"] || specs["Güç"] || specs["Power"] || "";
+        const range = specs["Menzil"] || specs["Mesafe"] || specs["Range"] || "";
+        const speed = specs["Maksimum Hız"] || specs["Hız"] || specs["Max Speed"] || "";
+        const weight = specs["Ağırlık"] || specs["Weight"] || "";
+
         setFormData({
           ...formData,
           name_ar: data.name || formData.name_ar,
@@ -121,19 +128,18 @@ const AdminProducts = () => {
           price: data.price || formData.price,
           description_ar: data.description || formData.description_ar,
           description_tr: data.description || formData.description_tr,
-          specifications: data.specifications || formData.specifications,
+          specifications: specs,
+          power: power,
+          range: range,
+          speed: speed,
+          weight: weight,
         });
         
-        // If user hasn't uploaded a manual image, store the scraped one
         if (data.image) {
           setScrapedImageUrl(data.image);
-          // Only auto-fill preview if no manual image exists
-          if (!formData.image_url) {
-            // We'll use this in the final submit if image_url is still empty
-          }
         }
         
-        alert("Veriler başarıyla çekildi! Alanlar otomatik dolduruldu.");
+        alert("Veriler başarıyla çekildi! Swarder özellikleri (Hız, Menzil, Güç) otomatik eşleştirildi.");
       } else {
         alert(data?.message || "Veri çekilemedi.");
       }

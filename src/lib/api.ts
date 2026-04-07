@@ -73,6 +73,38 @@ export const api = {
       body: JSON.stringify(data)
     }).then(handleResponse),
   },
+  messages: {
+    list: () => fetch(`${API_BASE_URL}/messages/`).then(handleResponse),
+    get: (id: string) => fetch(`${API_BASE_URL}/messages/${id}/`).then(handleResponse),
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/messages/${id}/`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    delete: (id: string) => fetch(`${API_BASE_URL}/messages/${id}/`, {
+      method: 'DELETE'
+    }).then(res => res.status === 204 ? true : handleResponse(res)),
+  },
+  orders: {
+    list: () => fetch(`${API_BASE_URL}/orders/`).then(handleResponse),
+    get: (id: string) => fetch(`${API_BASE_URL}/orders/${id}/`).then(handleResponse),
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/orders/${id}/`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    delete: (id: string) => fetch(`${API_BASE_URL}/orders/${id}/`, {
+      method: 'DELETE'
+    }).then(res => res.status === 204 ? true : handleResponse(res)),
+  },
+  visitors: {
+    list: () => fetch(`${API_BASE_URL}/visitors/`).then(handleResponse),
+    track: (path: string) => fetch(`${API_BASE_URL}/visitors/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path })
+    }).then(handleResponse),
+  },
   upload: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -88,5 +120,21 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then(handleResponse),
+  },
+  heroSliders: {
+    list: () => fetch(`${API_BASE_URL}/hero-sliders/`).then(handleResponse),
+    create: (data: any) => fetch(`${API_BASE_URL}/hero-sliders/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    update: (id: string, data: any) => fetch(`${API_BASE_URL}/hero-sliders/${id}/`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse),
+    delete: (id: string) => fetch(`${API_BASE_URL}/hero-sliders/${id}/`, {
+      method: 'DELETE'
+    }).then(res => res.status === 204 ? true : handleResponse(res)),
   }
 };

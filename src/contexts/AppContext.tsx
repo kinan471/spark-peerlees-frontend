@@ -17,6 +17,8 @@ export interface Product {
   speed?: string;
   is_spark_certified?: boolean;
   created_at?: string;
+  akakce_url?: string;
+  specifications?: Record<string, string>;
 }
 
 export interface Settings {
@@ -60,11 +62,61 @@ export interface TradeInRequest {
   created_at?: string;
 }
 
+export interface Message {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  is_read: boolean;
+  replied: boolean;
+  created_at?: string;
+}
+
+export interface Order {
+  id?: string;
+  product_id?: string;
+  product_details?: Product;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  customer_address?: string;
+  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled';
+  total_price: number;
+  created_at?: string;
+}
+
+export interface Visit {
+  id?: string;
+  path: string;
+  created_at?: string;
+}
+
+export interface HeroSlider {
+  id?: string;
+  title_ar: string;
+  title_tr: string;
+  subtitle_ar: string;
+  subtitle_tr: string;
+  image_url: string;
+  link_url: string;
+  button_text_ar: string;
+  button_text_tr: string;
+  order: number;
+  is_active: boolean;
+  created_at?: string;
+}
+
 interface AppContextType {
   products: Product[];
   batteryRequests: BatteryCustomization[];
   maintenanceRequests: MaintenanceRequest[];
   tradeInRequests: TradeInRequest[];
+  messages: Message[];
+  orders: Order[];
+  visits: Visit[];
+  heroSliders: HeroSlider[];
   
   addProduct: (product: Omit<Product, 'id' | 'created_at'>) => Promise<void>;
   updateProduct: (id: string, product: Partial<Product>) => Promise<void>;
@@ -79,6 +131,9 @@ interface AppContextType {
   addTradeInRequest: (req: Omit<TradeInRequest, 'id' | 'created_at' | 'status'>) => Promise<void>;
   updateTradeInStatus: (id: string, status: TradeInRequest['status']) => Promise<void>;
   
+  markMessageAsRead: (id: string) => Promise<void>;
+  updateOrderStatus: (id: string, status: Order['status']) => Promise<void>;
+  
   uploadProductImage: (file: File) => Promise<string | null>;
   settings: Settings;
   updateSettings: (settings: Partial<Settings>) => Promise<void>;
@@ -92,6 +147,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [batteryRequests, setBatteryRequests] = useState<BatteryCustomization[]>([]);
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([]);
   const [tradeInRequests, setTradeInRequests] = useState<TradeInRequest[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [heroSliders, setHeroSliders] = useState<HeroSlider[]>([]);
   const [settings, setSettings] = useState<Settings>({
     site_name: 'Swarder',
     tagline: 'Akıllı Hareketlilik Çözümleri',
@@ -105,33 +164,52 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     loadData();
     applyTheme();
+    // Track visit
+    api.visitors.track(window.location.pathname).catch(console.error);
   }, []);
 
   const applyTheme = () => {
-    // Swarder specific theme enforcement (Light mode, #007BFF, #FFC107)
     const root = document.documentElement;
     root.classList.remove('dark');
-    root.style.setProperty('--primary', '211 100% 50%'); // #007BFF -> HSL: 211, 100%, 50%
+    root.style.setProperty('--primary', '211 100% 50%'); // #007BFF
     root.style.setProperty('--ring', '211 100% 50%');
     root.style.setProperty('--primary-foreground', '0 0% 100%');
-    root.style.setProperty('--secondary', '45 100% 51%'); // #FFC107 -> HSL: 45, 100%, 51%
-    root.style.setProperty('--secondary-foreground', '0 0% 13%'); // #222
+    root.style.setProperty('--secondary', '45 100% 51%'); // #FFC107
+    root.style.setProperty('--secondary-foreground', '0 0% 13%');
   };
 
   const loadData = async () => {
     try {
-      const [productsData, batteryData, maintenanceData, tradeInData, settingsData] = await Promise.all([
+      const [
+        productsData, 
+        batteryData, 
+        maintenanceData, 
+        tradeInData, 
+        settingsData,
+        messagesData,
+        ordersData,
+        visitsData,
+        heroSlidersData
+      ] = await Promise.all([
         api.products.list(),
         api.batteryCustomization.list(),
         api.maintenance.list(),
         api.tradeIn.list(),
-        api.settings.get()
+        api.settings.get(),
+        api.messages.list(),
+        api.orders.list(),
+        api.visitors.list(),
+        api.heroSliders.list()
       ]);
       setProducts(productsData);
       setBatteryRequests(batteryData);
       setMaintenanceRequests(maintenanceData);
       setTradeInRequests(tradeInData);
       setSettings(settingsData);
+      setMessages(messagesData);
+      setOrders(ordersData);
+      setVisits(visitsData);
+      setHeroSliders(heroSlidersData);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -140,30 +218,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addProduct = async (product: Omit<Product, 'id' | 'created_at'>) => {
-    try {
-      const data = await api.products.create(product);
-      setProducts(prev => [data, ...prev]);
-    } catch (error) {
-      console.error('Error adding product:', error);
-    }
+    const data = await api.products.create(product);
+    setProducts(prev => [data, ...prev]);
   };
-
   const updateProduct = async (id: string, product: Partial<Product>) => {
-    try {
-      const data = await api.products.update(id, product);
-      setProducts(prev => prev.map(p => p.id === id ? data : p));
-    } catch (error) {
-      console.error('Error updating product:', error);
-    }
+    const data = await api.products.update(id, product);
+    setProducts(prev => prev.map(p => p.id === id ? data : p));
   };
-
   const deleteProduct = async (id: string) => {
-    try {
-      await api.products.delete(id);
-      setProducts(prev => prev.filter(p => p.id !== id));
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
+    await api.products.delete(id);
+    setProducts(prev => prev.filter(p => p.id !== id));
   };
 
   const addBatteryRequest = async (req: Omit<BatteryCustomization, 'id' | 'created_at' | 'status'>) => {
@@ -193,6 +257,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setTradeInRequests(prev => prev.map(r => r.id === id ? data : r));
   };
 
+  const markMessageAsRead = async (id: string) => {
+    const data = await api.messages.update(id, { is_read: true });
+    setMessages(prev => prev.map(m => m.id === id ? data : m));
+  };
+
+  const updateOrderStatus = async (id: string, status: Order['status']) => {
+    const data = await api.orders.update(id, { status });
+    setOrders(prev => prev.map(o => o.id === id ? data : o));
+  };
+
   const uploadProductImage = async (file: File) => {
     try {
       return await api.upload(file);
@@ -203,12 +277,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateSettings = async (newSettings: Partial<Settings>) => {
-    try {
-      const data = await api.settings.update(newSettings);
-      setSettings(data);
-    } catch (error) {
-      console.error('Error updating settings:', error);
-    }
+    const data = await api.settings.update(newSettings);
+    setSettings(data);
   };
 
   return (
@@ -217,6 +287,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       batteryRequests,
       maintenanceRequests,
       tradeInRequests,
+      messages,
+      orders,
+      visits,
+      heroSliders,
       addProduct,
       updateProduct,
       deleteProduct,
@@ -226,6 +300,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       updateMaintenanceStatus,
       addTradeInRequest,
       updateTradeInStatus,
+      markMessageAsRead,
+      updateOrderStatus,
       uploadProductImage,
       settings,
       updateSettings,
