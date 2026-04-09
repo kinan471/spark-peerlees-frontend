@@ -1,11 +1,49 @@
+import { supabase } from './supabase';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
+/**
+ * Helper function to handle API responses with error handling and security
+ */
 async function handleResponse(response: Response) {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'An error occurred' }));
     throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
   return response.json();
+}
+
+/**
+ * Get authentication token from Supabase session
+ */
+async function getAuthToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token || null;
+}
+
+/**
+ * Fetch with authentication header
+ */
+async function fetchWithAuth(url: string, options: RequestInit = {}) {
+  const token = await getAuthToken();
+  const headers: HeadersInit = {
+    ...options.headers,
+  };
+
+  // Add auth token if available
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Add content-type if not present and body exists
+  if (options.body && !(headers as any)['Content-Type']) {
+    (headers as any)['Content-Type'] = 'application/json';
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
 }
 
 export const api = {
